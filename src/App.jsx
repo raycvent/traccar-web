@@ -1,38 +1,30 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMediaQuery, useTheme } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
-import BottomMenu from './common/components/BottomMenu';
+
 import SocketController from './SocketController';
 import CachingController from './CachingController';
-import { useCatch, useAsyncTask } from './reactHelper';
-import { sessionActions } from './store';
 import UpdateController from './UpdateController';
 import MotionController from './main/MotionController';
 import TermsDialog from './common/components/TermsDialog';
 import Loader from './common/components/Loader';
 import fetchOrThrow from './common/util/fetchOrThrow';
 
+import { useCatch, useAsyncTask } from './reactHelper';
+import { sessionActions } from './store';
+
 const useStyles = makeStyles()(() => ({
   page: {
-    flexGrow: 1,
-    overflow: 'auto',
-  },
-  menu: {
-    zIndex: 4,
-    '@media print': {
-      display: 'none',
-    },
+    height: '100%',
+    width: '100%',
+    overflow: 'hidden',
   },
 }));
 
 const App = () => {
   const { classes } = useStyles();
-  const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const desktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const newServer = useSelector((state) => state.session.server.newServer);
   const termsUrl = useSelector((state) => state.session.server.attributes.termsUrl);
@@ -42,8 +34,15 @@ const App = () => {
     const response = await fetchOrThrow(`/api/users/${user.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...user, attributes: { ...user.attributes, termsAccepted: true } }),
+      body: JSON.stringify({
+        ...user,
+        attributes: {
+          ...user.attributes,
+          termsAccepted: true,
+        },
+      }),
     });
+
     dispatch(sessionActions.updateUser(await response.json()));
   });
 
@@ -51,6 +50,7 @@ const App = () => {
     async ({ signal }) => {
       if (!user) {
         const response = await fetch('/api/session', { signal });
+
         if (response.ok) {
           dispatch(sessionActions.updateUser(await response.json()));
         } else {
@@ -58,9 +58,11 @@ const App = () => {
             'postLogin',
             window.location.pathname + window.location.search,
           );
+
           navigate(newServer ? '/register' : '/login', { replace: true });
         }
       }
+
       return null;
     },
     [user, dispatch, navigate, newServer],
@@ -69,23 +71,27 @@ const App = () => {
   if (user == null) {
     return <Loader />;
   }
+
   if (termsUrl && !user.attributes.termsAccepted) {
-    return <TermsDialog open onCancel={() => navigate('/login')} onAccept={() => acceptTerms()} />;
+    return (
+      <TermsDialog
+        open
+        onCancel={() => navigate('/login')}
+        onAccept={() => acceptTerms()}
+      />
+    );
   }
+
   return (
     <>
       <SocketController />
       <CachingController />
       <UpdateController />
       <MotionController />
+
       <div className={classes.page}>
         <Outlet />
       </div>
-      {!desktop && (
-        <div className={classes.menu}>
-          <BottomMenu />
-        </div>
-      )}
     </>
   );
 };
