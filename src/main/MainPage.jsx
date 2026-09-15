@@ -114,6 +114,21 @@ const MainPage = () => {
 
   return (
     <div className={classes.root}>
+      <div
+        style={{
+          position: 'fixed',
+          top: 12,
+          right: 60,
+          zIndex: 9999,
+          background: '#111',
+          color: '#fff',
+          padding: '8px 14px',
+          borderRadius: 6,
+          fontWeight: 700,
+        }}
+      >
+        ASSET PORTAL DEV
+      </div>
       {desktop && (
         <Suspense fallback={null}>
           <MainMap
