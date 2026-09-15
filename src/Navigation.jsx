@@ -1,3 +1,6 @@
+import ReportsPage from './portal/ReportsPage';
+import AlertsPage from './portal/AlertsPage';
+import AssetsPage from './portal/AssetsPage';
 import { lazy, Suspense } from 'react';
 import { Route, Routes, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -128,6 +131,8 @@ const Navigation = () => {
         <Route path="/change-server" element={<ChangeServerPage />} />
         <Route path="/" element={<App />}>
           <Route index element={<MainPage />} />
+          <Route path="assets" element={<AssetsPage />} />
+          <Route path="alerts" element={<AlertsPage />} />
 
           <Route path="position/:id" element={<PositionPage />} />
           <Route path="network/:positionId" element={<NetworkPage />} />
@@ -180,6 +185,7 @@ const Navigation = () => {
           </Route>
 
           <Route path="reports">
+            <Route index element={<ReportsPage />} />
             <Route path="combined" element={<CombinedReportPage />} />
             <Route path="chart" element={<ChartReportPage />} />
             <Route path="events" element={<EventReportPage />} />
