@@ -29,8 +29,6 @@ import {
 
 import { devicesActions } from '../store';
 import useFilter from './useFilter';
-import DemoAssetMarkers from './DemoAssetMarkers';
-import { map } from '../map/core/MapView';
 
 const MainMap = lazy(() => import('./MainMap'));
 
@@ -81,54 +79,15 @@ const MainPage = () => {
     setFilteredPositions,
   );
 
-  const assets = useMemo(() => {
-    if (filteredDevices.length) {
-      return filteredDevices.map((device) => ({
-        ...device,
-        key: String(device.id),
-        placeholder: false,
-      }));
-    }
-
-    return [
-      {
-        id: 'asset-1',
-        key: 'asset-1',
-        name: 'Asset 1',
-        placeholder: true,
-        status: 'Online',
-        reportStatus: 'Reported today',
-        lastUpdate: '2026-09-15T10:15:00',
-        uniqueId: 'RV-000001',
-        latitude: 13.7563,
-        longitude: 100.5018,
-      },
-      {
-        id: 'asset-2',
-        key: 'asset-2',
-        name: 'Asset 2',
-        placeholder: true,
-        status: 'Online',
-        reportStatus: 'Reported today',
-        lastUpdate: '2026-09-15T09:48:00',
-        uniqueId: 'RV-000002',
-        latitude: 16.4322,
-        longitude: 102.8236,
-      },
-      {
-        id: 'asset-3',
-        key: 'asset-3',
-        name: 'Asset 3',
-        placeholder: true,
-        status: 'Offline',
-        reportStatus: 'Needs attention',
-        lastUpdate: '2026-09-14T16:32:00',
-        uniqueId: 'RV-000003',
-        latitude: 12.9236,
-        longitude: 100.8825,
-      },
-    ];
-  }, [filteredDevices]);
+  const assets = useMemo(
+  () =>
+    filteredDevices.map((device) => ({
+      ...device,
+      key: String(device.id),
+      placeholder: false,
+    })),
+  [filteredDevices],
+);
 
   const selectedAsset = assets.find(
     (asset) => asset.key === selectedAssetKey,
@@ -214,12 +173,6 @@ const MainPage = () => {
             onEventsClick={() => {}}
           />
         </Suspense>
-
-        <DemoAssetMarkers
-          assets={assets}
-          selectedAssetKey={selectedAssetKey}
-          onSelect={selectAsset}
-        />
       </Box>
 
       {/* TOP APP BAR */}
@@ -247,7 +200,7 @@ const MainPage = () => {
             letterSpacing: 0.5,
           }}
         >
-          REMOTE-VUE
+          ATP
         </Typography>
 
         <Box sx={{ flex: 1 }} />
